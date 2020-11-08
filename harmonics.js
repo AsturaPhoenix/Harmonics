@@ -35,28 +35,31 @@ function Player() {
   };
 }
 
+function Scale() {
+  this.fundamental = $("#fundamental").val();
+  this.degrees = $("#scale").val();
+
+  this.equalTemperamentFrequency = function (degree) {
+    return this.fundamental * Math.pow(2, degree / this.degrees);
+  }
+}
+
 $(function () {
   $("#playFundamental").click(function () {
-    var frequency = $("#fundamental").val();
-    new Player().addTone(frequency, 1).start();
+    new Player().addTone(new Scale().fundamental, 1).start();
   });
 
   $("#playScale").click(function () {
-    var fundamental = $("#fundamental").val();
-    var degrees = $("#scale").val();
+    var scale = new Scale();
 
-    var toneDuration = Math.max(.125, minScalePlaybackDuration / degrees);
-
-    function frequency(degree) {
-      return fundamental * Math.pow(2, degree / degrees);
-    }
+    var toneDuration = Math.max(.125, minScalePlaybackDuration / scale.degrees);
 
     var player = new Player();
-    for (var i = 0; i < degrees; ++i) {
-      player.addTone(frequency(i), toneDuration);
+    for (var i = 0; i < scale.degrees; ++i) {
+      player.addTone(scale.equalTemperamentFrequency(i), toneDuration);
     }
-    for (var i = degrees; i >= 0; --i) {
-      player.addTone(frequency(i), toneDuration);
+    for (var i = scale.degrees; i >= 0; --i) {
+      player.addTone(scale.equalTemperamentFrequency(i), toneDuration);
     }
     player.start();
   });
@@ -76,14 +79,18 @@ $(function () {
   var toneTemplate = $(".tones > *").detach();
 
   function updateScale() {
-    var fundamental = $("#fundamental").val();
-    var degrees = $("#scale").val();
+    var scale = new Scale();
 
     var tones = $(".tones");
     tones.empty();
 
-    for (var i = 0; i <= degrees; ++i) {
+    for (var i = 0; i <= scale.degrees; ++i) {
+      var ordinalDegree = (i % scale.degrees) + 1;
+      var etf = scale.equalTemperamentFrequency(i);
+
       var tone = toneTemplate.clone();
+      tone.find(".sd-intonation").text(ordinalDegree);
+      tone.find(".sd-etf").text(Math.round(etf) + " Hz");
       tones.append(tone);
     }
   }
