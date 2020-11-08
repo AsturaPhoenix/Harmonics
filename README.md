@@ -1,6 +1,17 @@
-Original blog post follows.
+# Harmonics
 
-==Sun, 23 Jul 2006 00:18:08 -04:00==
+https://asturaphoenix.github.io/Harmonics/
+
+Demonstrates how an affinity for periodic sound influences our choices of scale systems in music. This is an old demonstration from high school, ported to a web app.
+
+This web app uses the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) for playback and [Bootstrap](https://getbootstrap.com/)/[jQuery](https://jquery.com/) for layout and scripting.
+
+Original blog post follows for posterity. Features of the web app may differ.
+
+<hr>
+
+## Harmony
+**Sun, 23 Jul 2006 00:18:08 -04:00**
 
 The question I asked two days ago while conversing with Nathaniel was "Why do we use a twelve tone scale?"
 
