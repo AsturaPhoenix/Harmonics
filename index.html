@@ -16,7 +16,7 @@
   <script src="harmonics.js"></script>
 </head>
 
-<body>
+<body class="bg-light">
   <div class="container">
     <div class="py-2">
       <form>
@@ -26,8 +26,8 @@
             <input id="fundamental" class="form-control" type="text" value="440">
             <div class="input-group-append">
               <span class="input-group-text">hz</span>
-              <button id="playFundamental" class="play btn btn-outline-secondary" type="button"
-                aria-label="Play fundamental" title="Play fundamental">
+              <button id="playFundamental" class="play btn btn-info" type="button" aria-label="Play fundamental"
+                title="Play fundamental">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-volume-up-fill" fill="currentColor"
                   xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -48,8 +48,7 @@
           <div class="input-group">
             <input id="scale" class="form-control" type="text" value="12">
             <div class="input-group-append">
-              <button id="playScale" class="play btn btn-outline-secondary" type="button" aria-label="Play scale"
-                title="Play scale">
+              <button id="playScale" class="play btn btn-info" type="button" aria-label="Play scale" title="Play scale">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-volume-up-fill" fill="currentColor"
                   xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -65,14 +64,9 @@
             </div>
           </div>
           <div id="scalePresets" class="btn-group" role="group" aria-label="Scale presets">
-            <button type="button" class="btn btn-secondary">2</button>
-            <button type="button" class="btn btn-secondary">3</button>
-            <button type="button" class="btn btn-secondary">4</button>
             <button type="button" class="btn btn-secondary">5</button>
-            <button type="button" class="btn btn-secondary">6</button>
             <button type="button" class="btn btn-secondary">8</button>
             <button type="button" class="btn btn-secondary">12</button>
-            <button type="button" class="btn btn-secondary">16</button>
           </div>
         </div>
       </form>

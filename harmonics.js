@@ -1,43 +1,44 @@
-var maxAmplitudeAt = 220;
+var maxGainAt = 220;
 var minScalePlaybackDuration = 1;
+var rampLength = .015;
 
-function makeWindow(duration, margin) {
-  return function (t) {
-    return t <= 0 || t >= duration ? 0 :
-      t < margin ? t / margin :
-        t < duration - margin ? 1 :
-          (duration - t) / margin;
+var audioCtx;
+
+function Player() {
+  audioCtx ||= new (window.AudioContext || window.webkitAudioContext)();
+
+  this.oscillator = audioCtx.createOscillator();
+  this.gain = audioCtx.createGain();
+
+  this.oscillator.connect(this.gain);
+  this.gain.connect(audioCtx.destination);
+
+  this.length = 0;
+  this.gain.gain.setValueAtTime(0, audioCtx.currentTime);
+
+  this.start = function () {
+    this.oscillator.start();
+    this.oscillator.stop(audioCtx.currentTime + this.length);
   };
-}
 
-function play(duration, samplingFunction) {
-  var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  var buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * duration, audioCtx.sampleRate);
-  var data = buffer.getChannelData(0);
+  this.addTone = function (frequency, duration) {
+    var gain = Math.min(1, maxGainAt / frequency);
+    var t = audioCtx.currentTime + this.length;
 
-  for (var i = 0; i < data.length; ++i) {
-    data[i] = samplingFunction(i / audioCtx.sampleRate);
-  }
+    this.oscillator.frequency.setValueAtTime(frequency, t);
+    this.gain.gain.linearRampToValueAtTime(gain, t + rampLength);
+    this.gain.gain.setValueAtTime(gain, t + duration - rampLength);
+    this.gain.gain.linearRampToValueAtTime(0, t + duration);
 
-  var source = audioCtx.createBufferSource();
-  source.buffer = buffer;
-  source.connect(audioCtx.destination);
-  source.start();
-}
-
-function tone(frequency, duration) {
-  var amplitude = Math.min(1, maxAmplitudeAt / frequency);
-  var windowFn = makeWindow(duration, .05 * duration);
-
-  return function (t) {
-    return amplitude * Math.sin(2 * Math.PI * frequency * t) * windowFn(t);
+    this.length += duration;
+    return this;
   };
 }
 
 $(function () {
   $("#playFundamental").click(function () {
     var frequency = $("#fundamental").val();
-    play(1, tone(frequency, 1));
+    new Player().addTone(frequency, 1).start();
   });
 
   $("#playScale").click(function () {
@@ -46,20 +47,18 @@ $(function () {
 
     var toneDuration = Math.max(.125, minScalePlaybackDuration / degrees);
 
-    var tones = [];
-    for (var i = 0; i <= 2 * degrees; ++i) {
-      (function () {
-        var degree = i < degrees ? i : 2 * degrees - i;
-        var toneFn = tone(fundamental * Math.pow(2, degree / degrees), toneDuration);
-        var offset = i * toneDuration;
-        tones.push(function (t) { return toneFn(t - offset); });
-      })();
+    function frequency(degree) {
+      return fundamental * Math.pow(2, degree / degrees);
     }
 
-    play((2 * degrees + 1) * toneDuration, function (t) {
-      var i = Math.min(Math.floor(t / toneDuration), tones.length);
-      return tones[i](t);
-    });
+    var player = new Player();
+    for (var i = 0; i < degrees; ++i) {
+      player.addTone(frequency(i), toneDuration);
+    }
+    for (var i = degrees; i >= 0; --i) {
+      player.addTone(frequency(i), toneDuration);
+    }
+    player.start();
   });
 
   $(".input-group:has(.play)").on("keypress", function (e) {
