@@ -70,5 +70,25 @@ $(function () {
   $("#scalePresets button").click(function () {
     $("#scale").val($(this).text());
     $("#playScale").click();
+    updateScale();
   });
+
+  var toneTemplate = $(".tones > *").detach();
+
+  function updateScale() {
+    var fundamental = $("#fundamental").val();
+    var degrees = $("#scale").val();
+
+    var tones = $(".tones");
+    tones.empty();
+
+    for (var i = 0; i <= degrees; ++i) {
+      var tone = toneTemplate.clone();
+      tones.append(tone);
+    }
+  }
+
+  $("#fundamental, #scale").change(updateScale);
+
+  updateScale();
 });
