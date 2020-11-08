@@ -24,13 +24,12 @@
     <div class="row">
       <form class="col-md-4">
         <div class="form-group">
-          <label for="fundamental">Fundamental</label>
+          <label for="tonic">Tonic</label>
           <div class="input-group">
-            <input id="fundamental" class="form-control" type="number" value="440">
+            <input id="tonic" class="form-control" type="number" value="440">
             <div class="input-group-append">
               <span class="input-group-text">Hz</span>
-              <button id="playFundamental" class="play btn btn-info" type="button" aria-label="Play fundamental"
-                title="Play fundamental">
+              <button id="playTonic" class="play btn btn-info" type="button" aria-label="Play tonic" title="Play tonic">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-volume-up-fill" fill="currentColor"
                   xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -73,25 +72,48 @@
             <button type="button" class="btn btn-secondary">12</button>
           </div>
         </div>
-
-        <div class="form-group btn-group d-flex btn-group-toggle" data-toggle="buttons" role="group"
-          aria-label="Scale degree playback">
-          <label class="btn btn-info w-100 active">
-            <input id="scale-equal" type="checkbox" checked>Equal temperament
-          </label>
-          <label class="btn btn-info w-100 active">
-            <input id="scale-just" type="checkbox" checked>Just intonation
-          </label>
-        </div>
       </form>
 
       <div class="col-md-8">
+        <div class="btn-group d-flex" role="group" aria-label="Scale degree playback">
+          <span class="shift-register btn-group w-100">
+            <button class="btn btn-outline-info w-100" data-register-shift="1">
+              <span class="d-none d-sm-inline"><i>f</i><sub>0</sub></span>
+              <i>8<sub>vb</sub></i></button>
+            <button class="btn btn-outline-info w-100" data-register-shift="-1">
+              <span class="d-none d-sm-inline"><i>f</i><sub>0</sub></span>
+              <i>8<sup>va</sup></i></button>
+          </span>
+          <span class="btn-group btn-group-toggle w-100" data-toggle="buttons">
+            <label class="btn btn-info w-100 active" aria-label="Play equal temperament" title="Play equal temperament">
+              <input id="scale-equal" type="checkbox" checked>Equal <span class="d-none d-xl-inline">temperament</span>
+            </label>
+            <label class="btn btn-info w-100 active" aria-label="Play just intonation" title="Play just intonation">
+              <input id="scale-just" type="checkbox" checked>Just <span class="d-none d-xl-inline">intonation</span>
+            </label>
+          </span>
+        </div>
         <div class="tones list-group">
-          <a href="#" class="list-group-item list-group-item-action">
+          <a href="#" class="list-group-item list-group-item-action list-group-item-secondary">
             <div class="row text-center">
-              <div class="sd-intonation col">1 ± 0</div>
-              <div class="sd-etf col">440 Hz</div>
-              <div class="sd-jif col">440 Hz</div>
+              <div class="col-6">
+                <span class="sd-degree text-nowrap">1</span> <span class="sd-intonation d-none">± .00</span>
+                <span class="sd-harmonic-info d-none text-nowrap">
+                  @ <i>n</i> =
+                  <span class="d-lg-none">
+                    <span class="sd-harmonic-odd">1</span>
+                    <span class="d-none d-sm-inline">
+                      (<span class="sd-harmonic">1</span>)
+                    </span>
+                  </span>
+                  <span class="d-none d-lg-inline">
+                    <span class="sd-harmonic">1</span> =
+                    <span class="sd-harmonic-odd">1</span> × 2<sup class="sd-harmonic-exp">0</sup>
+                  </span>
+                </span>
+              </div>
+              <div class="col-3"><span class="sd-etf">440</span> Hz</div>
+              <div class="sd-jif col-3">---</div>
             </div>
           </a>
         </div>
