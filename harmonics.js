@@ -1,11 +1,12 @@
 var maxGainAt = 220;
-var minScalePlaybackDuration = 1;
+var minScalePlaybackDuration = 1, toneDuration = 1;
 var rampLength = .015;
 
 var register = 4;
 var audioCtx;
 
-function Player() {
+function Track(volume) {
+  volume ||= 1;
   audioCtx ||= new (window.AudioContext || window.webkitAudioContext)();
 
   var oscillator = audioCtx.createOscillator();
@@ -23,7 +24,7 @@ function Player() {
   };
 
   this.addTone = function (frequency, duration) {
-    var gain = Math.min(1, maxGainAt / frequency);
+    var gain = Math.min(1, volume * maxGainAt / frequency);
     var t = audioCtx.currentTime + length;
 
     oscillator.frequency.setValueAtTime(frequency, t);
@@ -55,6 +56,7 @@ function Scale() {
 
 function ScaleDegree(selector, scale, degree) {
   var etf = scale.equalTemperamentFrequency(degree);
+  var jif;
   var absIntonation;
 
   selector.find(".sd-degree").text((degree % scale.degrees) + 1);
@@ -84,22 +86,44 @@ function ScaleDegree(selector, scale, degree) {
     if (!(absIntonation < Math.abs(intonation))) {
       absIntonation = Math.abs(intonation);
       var factored = factorHarmonic(harmonic);
+      jif = scale.harmonicFrequency(harmonic);
 
       selector.find(".sd-intonation, .sd-harmonic-info").removeClass("d-none");
       selector.removeClass("list-group-item-secondary list-group-item-success list-group-item-warning list-group-item-danger");
+
+      if (absIntonation <= .1) {
+        selector.addClass("list-group-item-success");
+      } else if (absIntonation <= .2) {
+        selector.addClass("list-group-item-warning");
+      } else {
+        selector.addClass("list-group-item-danger");
+      }
 
       selector.find(".sd-harmonic").text(harmonic);
       selector.find(".sd-intonation").text(formatIntonation(intonation));
       selector.find(".sd-harmonic-odd").text(factored.odd);
       selector.find(".sd-harmonic-exp").text(factored.exp);
-      selector.find(".sd-jif").text(Math.round(scale.harmonicFrequency(harmonic)) + " Hz");
+      selector.find(".sd-jif").text(Math.round(jif) + " Hz");
+    }
+  };
+
+  this.isSelected = function () {
+    return selector.hasClass("active");
+  };
+
+  this.play = function (volume) {
+    if ($("#scale-equal").prop("checked")) {
+      new Track(.5 * volume).addTone(etf, toneDuration).start();
+    }
+    if (jif !== undefined && $("#scale-just").prop("checked")) {
+      new Track(.5 * volume).addTone(jif, toneDuration).start();
     }
   };
 }
 
 $(function () {
   $("#playTonic").click(function () {
-    new Player().addTone($("#tonic").val(), 1).start();
+    new Track().addTone($("#tonic").val(), toneDuration).start();
   });
 
   $("#playScale").click(function () {
@@ -107,7 +131,7 @@ $(function () {
 
     var toneDuration = Math.max(.125, minScalePlaybackDuration / scale.degrees);
 
-    var player = new Player();
+    var player = new Track();
     for (var i = 0; i < scale.degrees; ++i) {
       player.addTone(scale.equalTemperamentFrequency(i), toneDuration);
     }
@@ -136,6 +160,7 @@ $(function () {
   });
 
   var toneTemplate = $(".tones > *").detach();
+  var scaleDegrees;
 
   function updateScale() {
     var scale = new Scale();
@@ -143,7 +168,7 @@ $(function () {
     var tones = $(".tones");
     tones.empty();
 
-    var scaleDegrees = [];
+    scaleDegrees = [];
 
     for (var i = 0; i <= scale.degrees; ++i) {
       var tone = toneTemplate.clone();
@@ -160,4 +185,18 @@ $(function () {
   $("#tonic, #scale").change(updateScale);
 
   updateScale();
+
+  function playSelected() {
+    var selected = scaleDegrees.filter(s => s.isSelected());
+    for (var scaleDegree of selected) {
+      scaleDegree.play(1 / Math.sqrt(selected.length));
+    }
+  }
+
+  $(".tones").click(function (e) {
+    $(e.target).closest(".list-group-item").toggleClass("active");
+    playSelected();
+  });
+
+  $("#scale-equal, #scale-just").change(playSelected);
 });
