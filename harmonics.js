@@ -94,8 +94,12 @@ function initHarmonicEntries(selector) {
     selector.find(".he-harmonic-odd").text(factored.odd);
     selector.find(".he-harmonic-exp").text(factored.exp);
 
-    if (!$("#show-all-harmonics").prop("checked") && harmonic % 2 == 0) {
-      selector.hide();
+    if (!$("#show-all-harmonics").prop("checked")) {
+      if (harmonic % 2 == 0) {
+        selector.hide();
+      }
+
+      selector.find(".he-harmonic-factors").hide();
     }
   });
 }
@@ -226,13 +230,17 @@ $(function () {
 
   $("#show-all-harmonics").change(function () {
     var evens = $(".harmonics > :odd"); // because 0-indexed
+    var factors = $(".he-harmonic-factors");
     var label = $(this).next();
+
     if (this.checked) {
       evens.show();
+      factors.show();
       label.text("All harmonics");
     } else {
       evens.hide();
       evens.removeClass("active");
+      factors.hide();
       label.text("Odd harmonics only");
     }
   });
