@@ -177,27 +177,17 @@ $(function () {
     player.start();
   });
 
-  $(".input-group:has(.play)").on("keypress", function (e) {
-    if (e.which == 13) {
-      $(this).closest(".input-group").find(".play").click();
-    }
-  });
-
   $("#adjustFundamental .btn").click(function () {
     var multiplier = $(this).data("fundamentalMultiplier");
-    $("#fundamental").val(function (_, f) {
-      return f *= multiplier;
-    });
-    updateScale();
-
-    playSelected() || $("#playFundamental").click();
+    $("#fundamental")
+      .val(function (_, f) { return f *= multiplier; })
+      .change();
   });
 
   $("#scalePresets button").click(function () {
-    $("#scale").val($(this).text());
-    updateScale();
-
-    playSelected() || $("#playScale").click();
+    $("#scale")
+      .val($(this).text())
+      .change();
   });
 
   var entryTemplate = $(".harmonics > *").detach();
@@ -207,7 +197,10 @@ $(function () {
     updateHarmonicEntries($(".harmonics > *"), scale);
   }
 
-  $("#fundamental, #scale").change(updateScale);
+  $("#fundamental, #scale").change(function () {
+    updateScale();
+    playSelected() || $(this).closest(".input-group").find(".play").click();
+  });
 
   for (var i = 0; i < nHarmonics; ++i) {
     $(".harmonics").append(entryTemplate.clone());
@@ -216,7 +209,7 @@ $(function () {
   updateScale();
 
   function playSelected() {
-    var selected = $(".harmonics > *").filter(".active");
+    var selected = $(".harmonics > .active");
     playHarmonicEntries(selected);
     return selected.length > 0;
   }
