@@ -22,14 +22,15 @@
 <body class="bg-light">
   <div class="container py-2">
     <div class="row">
-      <form class="col-md-4">
+      <form class="col-lg-4">
         <div class="form-group">
-          <label for="tonic">Tonic</label>
+          <label for="fundamental">Fundamental</label>
           <div class="input-group">
-            <input id="tonic" class="form-control" type="number" value="440">
+            <input id="fundamental" class="form-control" type="number" value="110">
             <div class="input-group-append">
               <span class="input-group-text">Hz</span>
-              <button id="playTonic" class="play btn btn-info" type="button" aria-label="Play tonic" title="Play tonic">
+              <button id="playFundamental" class="play btn btn-info" type="button" aria-label="Play fundamental"
+                title="Play fundamental">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-volume-up-fill" fill="currentColor"
                   xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -43,6 +44,12 @@
                 </svg>
               </button>
             </div>
+          </div>
+          <div id="adjustFundamental" class="btn-group" role="group" aria-label="Adjust fundamental">
+            <button type="button" class="btn btn-secondary"
+              data-fundamental-multiplier=".5"><i>8<sub>vb</sub></i></button>
+            <button type="button" class="btn btn-secondary"
+              data-fundamental-multiplier="2"><i>8<sup>va</sup></i></button>
           </div>
         </div>
 
@@ -74,46 +81,28 @@
         </div>
       </form>
 
-      <div class="col-md-8">
-        <div class="btn-group d-flex" role="group" aria-label="Scale degree playback">
-          <span class="shift-register btn-group w-100">
-            <button class="btn btn-outline-info w-100" data-register-shift="1">
-              <span class="d-none d-sm-inline"><i>f</i><sub>0</sub></span>
-              <i>8<sub>vb</sub></i></button>
-            <button class="btn btn-outline-info w-100" data-register-shift="-1">
-              <span class="d-none d-sm-inline"><i>f</i><sub>0</sub></span>
-              <i>8<sup>va</sup></i></button>
-          </span>
-          <span class="btn-group btn-group-toggle w-100" data-toggle="buttons">
-            <label class="btn btn-info w-100 active" aria-label="Play equal temperament" title="Play equal temperament">
-              <input id="scale-equal" type="checkbox" checked>Equal <span class="d-none d-xl-inline">temperament</span>
-            </label>
-            <label class="btn btn-info w-100 active" aria-label="Play just intonation" title="Play just intonation">
-              <input id="scale-just" type="checkbox" checked>Just <span class="d-none d-xl-inline">intonation</span>
-            </label>
-          </span>
+      <div class="col-lg-8">
+        <div class="btn-group btn-group-toggle d-flex" data-toggle="buttons">
+          <label class="btn btn-outline-secondary w-100 active">
+            <input id="show-all-harmonics" type="checkbox" checked><span>All harmonics</span>
+          </label>
+          <label class="btn btn-info w-50 active" aria-label="Play scale tone" title="Play scale tone">
+            <input id="play-scale-tone" type="checkbox" checked>Scale
+          </label>
+          <label class="btn btn-info w-50 active" aria-label="Play harmonic" title="Play harmonic">
+            <input id="play-harmonic" type="checkbox" checked>Harmonic
+          </label>
         </div>
-        <div class="tones list-group">
+        <div class="harmonics list-group">
           <a href="javascript:void(0)" class="list-group-item list-group-item-action list-group-item-secondary">
             <div class="row text-center">
-              <div class="col-6">
-                <span class="sd-degree text-nowrap">1</span> <span class="sd-intonation d-none">± .00</span>
-                <span class="sd-harmonic-info d-none text-nowrap">
-                  @ <i>n</i> =
-                  <span class="d-lg-none">
-                    <span class="sd-harmonic-odd">1</span>
-                    <span class="d-none d-sm-inline">
-                      (<span class="sd-harmonic">1</span>)
-                    </span>
-                  </span>
-                  <span class="d-none d-lg-inline">
-                    <span class="sd-harmonic">1</span> =
-                    <span class="sd-harmonic-odd">1</span> × 2<sup class="sd-harmonic-exp">0</sup>
-                  </span>
-                </span>
+              <div class="col-3">
+                <span class="he-harmonic">1</span><span class="he-harmonic-factors d-none d-sm-inline"> = <span
+                    class="he-harmonic-odd">1</span> × 2<sup class="he-harmonic-exp">0</sup></span>
               </div>
-              <div class="col-3"><span class="sd-etf">440</span> Hz</div>
-              <div class="sd-jif col-3">---</div>
+              <div class="col-3"><span class="he-degree">1</span> <span class="he-intonation">± .00</span></div>
+              <div class="col-3"><span class="he-sf">440</span> Hz</div>
+              <div class="col-3"><span class="he-hf">440</span> Hz</div>
             </div>
           </a>
         </div>
